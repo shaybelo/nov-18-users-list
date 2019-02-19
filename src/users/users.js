@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 function writeFile(content) {
 	fs.writeFileSync('./users.json', JSON.stringify(content));
 }

@@ -1,4 +1,5 @@
-const express = require('express');
+const { Router } = require('express');
+
 const {
 	getUsers,
 	createUser,
@@ -7,14 +8,14 @@ const {
 	updateUserById
 } = require('./users');
 
-const app = express();
+const route = Router();
 
-app.get('/users', (req, res) => {
+route.get('/users', (req, res) => {
 	const users = getUsers();
 	res.send(users);
 });
 
-app.post('/users', (req, res) => {
+route.post('/users', (req, res) => {
 	try {
 		const users = createUser(req.query);
 		res.send(users);
@@ -24,23 +25,24 @@ app.post('/users', (req, res) => {
 	}
 });
 
-app.delete('/users/:id', (req, res) => {
+route.delete('/users/:id', (req, res) => {
 	const users = deleteUser(req.params.id);
 	res.send(users);
 });
 
-app.get('/users/:id', (req, res) => {
+route.get('/users/:id', (req, res) => {
 	const user = getUserById(req.params.id);
 	res.send(user);
 });
 
-app.put('/users/:id', (req, res) => {
+route.put('/users/:id', (req, res) => {
 	const user = updateUserById(req.params.id, req.query);
 	res.send(user);
 });
 
-
-app.listen(8080);
+module.exports = {
+	route
+};
 
 
 
