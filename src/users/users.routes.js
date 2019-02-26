@@ -15,24 +15,24 @@ const {
 
 const route = Router();
 
-route.get('/users', (req, res) => {
+route.get('/users', async (req, res) => {
 	const { MongoClient } = require('mongodb');
 
 	// Connection URL
 	const url = 'mongodb://localhost:27017';
 
-	// Use connect method to connect to the server
-	MongoClient
-		.connect(url)
-		.then(connection => {
-			// Database Name
-			const database = connection.db('nov-18');
-			return database
-				.collection('users')
-				.find({})
-				.toArray();
-		})
-		.then(result => res.send(result));
+	try {
+		// Use connect method to connect to the server
+		const connection = await MongoClient.connect(url);
+
+		const database = connection.db('nov-18');
+		const usersCollection = database.collection('users');
+		const result = await usersCollection.find({}).toArray();
+
+		res.send(result);
+	} catch (e) {
+		res.status(400).send(e.message);
+	}
 });
 
 route.post('/users', (req, res) => {
