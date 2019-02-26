@@ -1,4 +1,5 @@
 const fs = require('fs');
+const uuid = require('uuid');
 
 function writeFile(content) {
 	fs.writeFileSync('./postsList.json', JSON.stringify(content));
@@ -8,15 +9,11 @@ function getPosts() {
 	return require('./postsList.json');
 }
 
-function createPost({ userId, id, title, body }) {
-	if(getPostById(id)) {
-		throw new Error(`Post with ID ${id} already exists`);
-	}
-
+function createPost({ userId, title, body }) {
 	const posts = getPosts();
 
 	posts.unshift({
-		userId, id, title, body
+		userId, title, body, id: uuid()
 	});
 
 
@@ -52,10 +49,16 @@ function updatePostById(id, { userId, title, body }) {
 	return post;
 }
 
+function getPostsByUserId(userId) {
+	const posts = getPosts();
+	return posts.filter(post => post.userId == userId);
+}
+
 module.exports = {
 	getPosts,
 	createPost,
 	deletePost,
 	getPostById,
-	updatePostById
+	updatePostById,
+	getPostsByUserId
 };

@@ -1,4 +1,5 @@
 const fs = require('fs');
+const uuid = require('uuid/v1');
 
 function writeFile(content) {
 	fs.writeFileSync('./users.json', JSON.stringify(content));
@@ -8,15 +9,13 @@ function getUsers() {
 	return require('./users.json');
 }
 
-function createUser({ name, lastName, id }) {
-	if(getUserById(id)) {
-		throw new Error(`User with ID ${id} already exists`);
-	}
-
+function createUser({ name, lastName }) {
 	const users = getUsers();
 
 	users.unshift({
-		name, lastName, id
+		name,
+		lastName,
+		id: uuid()
 	});
 
 

@@ -1,20 +1,27 @@
-const {app} = require('../app');
+const { Router } = require('express');
 
 const {
 	getPosts,
 	createPost,
 	deletePost,
 	getPostById,
-	updatePostById
+	updatePostById,
+	getPostsByUserId
 } = require('./posts');
 
+const route = Router();
 
-app.get('/posts', (req, res) => {
-	const posts = getPosts();
-	res.send(posts);
+route.get('/posts', (req, res) => {
+	if (req.query.userId) {
+		const posts = getPostsByUserId(req.query.userId);
+		res.send(posts);
+	} else {
+		const posts = getPosts();
+		res.send(posts);
+	}
 });
 
-app.post('/posts', (req, res) => {
+route.post('/posts', (req, res) => {
 	try {
 		const posts = createPost(req.query);
 		res.send(posts);
@@ -24,20 +31,24 @@ app.post('/posts', (req, res) => {
 	}
 });
 
-app.delete('/posts/:id', (req, res) => {
+route.delete('/posts/:id', (req, res) => {
 	const posts = deletePost(req.params.id);
 	res.send(posts);
 });
 
-app.get('/posts/:id', (req, res) => {
+route.get('/posts/:id', (req, res) => {
 	const post = getPostById(req.params.id);
 	res.send(post);
 });
 
-app.put('/posts/:id', (req, res) => {
+route.put('/posts/:id', (req, res) => {
 	const post = updatePostById(req.params.id, req.query);
 	res.send(post);
 });
+
+module.exports = {
+	route
+};
 
 
 
