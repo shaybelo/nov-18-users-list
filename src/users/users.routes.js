@@ -16,8 +16,23 @@ const {
 const route = Router();
 
 route.get('/users', (req, res) => {
-	const users = getUsers();
-	res.send(users);
+	const { MongoClient } = require('mongodb');
+
+	// Connection URL
+	const url = 'mongodb://localhost:27017';
+
+	// Use connect method to connect to the server
+	MongoClient
+		.connect(url)
+		.then(connection => {
+			// Database Name
+			const database = connection.db('nov-18');
+			return database
+				.collection('users')
+				.find({})
+				.toArray();
+		})
+		.then(result => res.send(result));
 });
 
 route.post('/users', (req, res) => {
