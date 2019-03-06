@@ -15,49 +15,69 @@ const {
 
 const route = Router();
 
+const { MongoClient, ObjectID } = require('mongodb');
+
+async function getUsersCollection() {
+	const connection =
+		await MongoClient.connect('mongodb://localhost:27017');
+
+	const database = connection.db('nov-18');
+	return database.collection('users');
+}
+
 route.get('/users', async (req, res) => {
-	const { MongoClient } = require('mongodb');
-
-	// Connection URL
-	const url = 'mongodb://localhost:27017';
-
 	try {
-		// Use connect method to connect to the server
-		const connection = await MongoClient.connect(url);
-
-		const database = connection.db('nov-18');
-		const usersCollection = database.collection('users');
-		const result = await usersCollection.find({}).toArray();
-
-		res.send(result);
+		const users = await getUsers(req.query);
+		res.send(users);
 	} catch (e) {
-		res.status(400).send(e.message);
+		res.status(400);
+		res.send(e.message);
 	}
 });
 
-route.post('/users', (req, res) => {
+route.post('/users', async (req, res) => {
 	try {
-		const users = createUser(req.body);
-		res.send(users);
+		const usersCollection = await getUsersCollection();
+		const result = await usersCollection.insertOne(req.body);
+		res.send(result);
 	} catch (e) {
 		res.status(409);
 		res.send(e.message);
 	}
 });
 
-route.delete('/users/:id', (req, res) => {
-	const users = deleteUser(req.params.id);
-	res.send(users);
+route.get('/users/:id', async (req, res) => {
+	try {
+		const usersCollection = await getUsersCollection();
+		const user = await usersCollection.findOne({ _id: ObjectID(req.params.id) });
+		res.send(user);
+	} catch (e) {
+		res.status(400).send(e.message);
+	}
 });
 
-route.get('/users/:id', (req, res) => {
-	const user = getUserById(req.params.id);
-	res.send(user);
+route.delete('/users/:id', async (req, res) => {
+	try {
+		const usersCollection = await getUsersCollection();
+		const user = await usersCollection.deleteOne({ _id: ObjectID(req.params.id) });
+		res.send(user);
+	} catch (e) {
+		res.status(400).send(e.message);
+	}
 });
 
-route.put('/users/:id', (req, res) => {
-	const user = updateUserById(req.params.id, req.body);
-	res.send(user);
+route.put('/users/:id', async (req, res) => {
+	try {
+		const usersCollection = await getUsersCollection();
+		const user = await usersCollection
+			.updateOne(
+				{ _id: ObjectID(req.params.id) },
+				{ $set: req.body }
+			);
+		res.send(user);
+	} catch (e) {
+		res.status(400).send(e.message);
+	}
 });
 
 route.get('/users/:id/posts', (req, res) => {

@@ -1,12 +1,26 @@
 const fs = require('fs');
 const uuid = require('uuid/v1');
+const { MongoClient, ObjectID } = require('mongodb');
 
 function writeFile(content) {
 	fs.writeFileSync('./users.json', JSON.stringify(content));
 }
 
-function getUsers() {
-	return require('./users.json');
+async function getUsersCollection() {
+	const connection =
+		await MongoClient.connect('mongodb://localhost:27017');
+
+	const database = connection.db('nov-18');
+	return database.collection('users');
+}
+
+async function getUsers(query) {
+	const usersCollection = await getUsersCollection();
+
+	return usersCollection.find({
+		name: new RegExp(query.name, 'i'),
+		lastName: new RegExp(query.lastName, 'i'),
+	}).toArray();
 }
 
 function createUser({ name, lastName }) {
