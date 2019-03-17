@@ -1,4 +1,4 @@
-const { isAlcoholLegalForAge } = require('../src/alcohol');
+const { isAlcoholLegalForAge } = require('../server/alcohol');
 
 function getLegalAlcoholAge(){
 	return 18;

@@ -1,4 +1,4 @@
-const { Bar } = require('../src/alcohol');
+const { Bar } = require('../server/alcohol');
 
 describe("Test Bar Class", () => {
 	let bar;

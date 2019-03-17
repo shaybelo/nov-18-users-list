@@ -19,7 +19,6 @@ async function getUsers(query) {
 
 	return usersCollection.find({
 		name: new RegExp(query.name, 'i'),
-		lastName: new RegExp(query.lastName, 'i'),
 	}).toArray();
 }
 
