@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { UsersService } from "./UsersService";
+import {UsersList} from "./UsersList";
 import './App.css';
 
 const usersService = new UsersService();
@@ -36,29 +37,12 @@ class App extends Component {
 	}
 
 	render() {
-		if(!this.state.users)
-			return <p>Loading Users...</p>;
-
 		return (
 			<div className="App">
 				<form onSubmit={(event) => this.createUser(event)}>
 					<input ref={this.inputEl} placeholder="Enter new user"/>
 				</form>
-				<ul>
-					{
-						this.state.users
-							.map((user, i) =>
-								<li key={i}>
-									{user.name}
-									<button
-										onClick={() => this.deleteUser(user)}
-									>
-										Delete
-									</button>
-								</li>
-							)
-					}
-				</ul>
+				<UsersList users={this.state.users} onDeleteUser={(user) => this.deleteUser(user)}/>
 			</div>
 		);
 	}

@@ -1,57 +1,45 @@
-const fs = require('fs');
-const uuid = require('uuid');
+const { MongoClient, ObjectID } = require('mongodb');
 
-function writeFile(content) {
-	fs.writeFileSync('./postsList.json', JSON.stringify(content));
+async function getPostsCollection() {
+	const connection =
+		await MongoClient.connect('mongodb://localhost:27017');
+
+	const database = connection.db('nov-18');
+	return database.collection('posts');
 }
 
-function getPosts() {
-	return require('./postsList.json');
+async function getPosts() {
+	const collection = await getPostsCollection();
+	return collection.find({}).toArray();
 }
 
-function createPost({ userId, title, body }) {
-	const posts = getPosts();
-
-	posts.unshift({
-		userId, title, body, id: uuid()
-	});
-
-
-	return posts;
+async function createPost(post) {
+	const collection = await getPostsCollection();
+	return collection.insertOne(post);
 }
 
-function deletePost(id) {
-	let posts = getPosts();
-
-	posts = posts.filter(post => post.id != id);
-
-	writeFile(posts);
-
-	return posts;
+async function deletePost(id) {
+	const collection = await getPostsCollection();
+	return collection.deleteOne({ _id: ObjectID(id) });
 }
 
-function getPostById(id) {
-	const posts = getPosts();
-	const post = posts.find(post => post.id == id);
-	return post;
+async function getPostById(id) {
+	const collection = await getPostsCollection();
+	return collection.findOne({ _id: ObjectID(id) });
 }
 
-function updatePostById(id, { userId, title, body }) {
-	const posts = getPosts();
-
-	const post = posts.find(post => post.id == id);
-	post.userId = userId;
-	post.title = title;
-	post.body = body;
-
-	writeFile(posts);
-
-	return post;
+async function updatePostById(id, post) {
+	const collection = await getPostsCollection();
+	return collection
+		.updateOne(
+			{ _id: ObjectID(id) },
+			{ $set: post }
+		);
 }
 
-function getPostsByUserId(userId) {
-	const posts = getPosts();
-	return posts.filter(post => post.userId == userId);
+async function getPostsByUserId(userId) {
+	const collection = await getPostsCollection();
+	return collection.find({ userId: userId }).toArray();
 }
 
 module.exports = {
@@ -62,3 +50,12 @@ module.exports = {
 	updatePostById,
 	getPostsByUserId
 };
+
+
+
+
+
+
+
+
+

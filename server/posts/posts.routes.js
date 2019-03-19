@@ -11,19 +11,19 @@ const {
 
 const route = Router();
 
-route.get('/posts', (req, res) => {
+route.get('/posts', async (req, res) => {
 	if (req.query.userId) {
-		const posts = getPostsByUserId(req.query.userId);
+		const posts = await getPostsByUserId(req.query.userId);
 		res.send(posts);
 	} else {
-		const posts = getPosts();
+		const posts = await getPosts();
 		res.send(posts);
 	}
 });
 
-route.post('/posts', (req, res) => {
+route.post('/posts', async (req, res) => {
 	try {
-		const posts = createPost(req.query);
+		const posts = await createPost(req.body);
 		res.send(posts);
 	} catch (e) {
 		res.status(409);
@@ -31,18 +31,18 @@ route.post('/posts', (req, res) => {
 	}
 });
 
-route.delete('/posts/:id', (req, res) => {
-	const posts = deletePost(req.params.id);
+route.delete('/posts/:id', async (req, res) => {
+	const posts = await deletePost(req.params.id);
 	res.send(posts);
 });
 
-route.get('/posts/:id', (req, res) => {
-	const post = getPostById(req.params.id);
+route.get('/posts/:id', async (req, res) => {
+	const post = await getPostById(req.params.id);
 	res.send(post);
 });
 
-route.put('/posts/:id', (req, res) => {
-	const post = updatePostById(req.params.id, req.query);
+route.put('/posts/:id', async (req, res) => {
+	const post = await updatePostById(req.params.id, req.query);
 	res.send(post);
 });
 

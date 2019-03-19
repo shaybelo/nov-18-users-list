@@ -1,10 +1,4 @@
-const fs = require('fs');
-const uuid = require('uuid/v1');
 const { MongoClient, ObjectID } = require('mongodb');
-
-function writeFile(content) {
-	fs.writeFileSync('./users.json', JSON.stringify(content));
-}
 
 async function getUsersCollection() {
 	const connection =
@@ -22,44 +16,28 @@ async function getUsers(query) {
 	}).toArray();
 }
 
-function createUser({ name, lastName }) {
-	const users = getUsers();
-
-	users.unshift({
-		name,
-		lastName,
-		id: uuid()
-	});
-
-
-	return users;
+async function createUser(user) {
+	const usersCollection = await getUsersCollection();
+	return usersCollection.insertOne(user);
 }
 
-function deleteUser(id) {
-	let users = getUsers();
-
-	users = users.filter(user => user.id != id);
-
-	writeFile(users);
-
-	return users;
+async function deleteUser(id) {
+	const usersCollection = await getUsersCollection();
+	return usersCollection.deleteOne({ _id: ObjectID(id) });
 }
 
-function getUserById(id) {
-	const users = getUsers();
-	const user = users.find(user => user.id == id);
-	return user;
+async function getUserById(id) {
+	const usersCollection = await getUsersCollection();
+	return usersCollection.findOne({ _id: ObjectID(id) });
 }
 
-function updateUserById(id, { name }) {
-	const users = getUsers();
-
-	const user = users.find(user => user.id == id);
-	user.name = name;
-
-	writeFile(users);
-
-	return user;
+async function updateUserById(id, user) {
+	const usersCollection = await getUsersCollection();
+	return usersCollection
+		.updateOne(
+			{ _id: ObjectID(id) },
+			{ $set: user }
+		);
 }
 
 module.exports = {
