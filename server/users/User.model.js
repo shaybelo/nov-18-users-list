@@ -5,7 +5,7 @@ mongoose.connect(
 	{ useNewUrlParser: true }
 );
 
-const UserSchema = mongoose.Schema({
+const User = mongoose.model('User', {
 	name: {
 		type: String,
 		required: true,
@@ -25,10 +25,7 @@ const UserSchema = mongoose.Schema({
 	},
 });
 
-const User = mongoose.model('User', UserSchema);
-
 module.exports = {
 	User,
-	UserSchema
 };
 
