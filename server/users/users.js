@@ -1,43 +1,27 @@
-const { MongoClient, ObjectID } = require('mongodb');
-
-async function getUsersCollection() {
-	const connection =
-		await MongoClient.connect('mongodb://localhost:27017');
-
-	const database = connection.db('nov-18');
-	return database.collection('users');
-}
+const {User} = require('./User.model');
 
 async function getUsers(query) {
-	const usersCollection = await getUsersCollection();
-
-	return usersCollection.find({
-		name: new RegExp(query.name, 'i'),
-	}).toArray();
+	return User.find({
+		name: new RegExp(query, 'i')
+	});
 }
 
-async function createUser(user) {
-	const usersCollection = await getUsersCollection();
-	return usersCollection.insertOne(user);
-}
-
-async function deleteUser(id) {
-	const usersCollection = await getUsersCollection();
-	return usersCollection.deleteOne({ _id: ObjectID(id) });
+async function createUser(userData) {
+	const user = new User(userData);
+	await user.save();
+	return user;
 }
 
 async function getUserById(id) {
-	const usersCollection = await getUsersCollection();
-	return usersCollection.findOne({ _id: ObjectID(id) });
+	return User.findById(id);
+}
+
+async function deleteUser(id) {
+	return User.findByIdAndDelete(id);
 }
 
 async function updateUserById(id, user) {
-	const usersCollection = await getUsersCollection();
-	return usersCollection
-		.updateOne(
-			{ _id: ObjectID(id) },
-			{ $set: user }
-		);
+	return User.findByIdAndUpdate(id, user);
 }
 
 module.exports = {

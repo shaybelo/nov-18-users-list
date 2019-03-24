@@ -1,45 +1,29 @@
-const { MongoClient, ObjectID } = require('mongodb');
-
-async function getPostsCollection() {
-	const connection =
-		await MongoClient.connect('mongodb://localhost:27017');
-
-	const database = connection.db('nov-18');
-	return database.collection('posts');
-}
+const {Post} = require('./Posts.model');
 
 async function getPosts() {
-	const collection = await getPostsCollection();
-	return collection.find({}).toArray();
+	return Post.find({}).populate('author');
 }
 
-async function createPost(post) {
-	const collection = await getPostsCollection();
-	return collection.insertOne(post);
+async function createPost(postData) {
+	const post = new Post(postData);
+	await post.save();
+	return post.populate('author');
 }
 
 async function deletePost(id) {
-	const collection = await getPostsCollection();
-	return collection.deleteOne({ _id: ObjectID(id) });
+	return Post.findByIdAndDelete(id);
 }
 
 async function getPostById(id) {
-	const collection = await getPostsCollection();
-	return collection.findOne({ _id: ObjectID(id) });
+	return Post.findById(id).populate('author');
 }
 
 async function updatePostById(id, post) {
-	const collection = await getPostsCollection();
-	return collection
-		.updateOne(
-			{ _id: ObjectID(id) },
-			{ $set: post }
-		);
+	return Post.findByIdAndUpdate(id, post);
 }
 
 async function getPostsByUserId(userId) {
-	const collection = await getPostsCollection();
-	return collection.find({ userId: userId }).toArray();
+	// ??
 }
 
 module.exports = {

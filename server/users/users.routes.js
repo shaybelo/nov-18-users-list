@@ -68,14 +68,18 @@ route.get   ('/users/:id/posts', async (req, res) => {
 });
 
 route.post  ('/users/:id/posts', async (req, res) => {
-	const post = {
-		...req.body,
-		userId: req.params.id,
-	};
+	try {
+		const post = {
+			...req.body,
+			userId: req.params.id,
+		};
 
-	const posts = await createPost(post);
+		const posts = await createPost(post);
 
-	res.send(posts);
+		res.send(posts);
+	} catch (e) {
+		res.status(400).send(e.message);
+	}
 });
 
 module.exports = {
