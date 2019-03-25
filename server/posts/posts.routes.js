@@ -6,7 +6,9 @@ const {
 	deletePost,
 	getPostById,
 	updatePostById,
-	getPostsByUserId
+	getPostsByUserId,
+	addComment,
+	getCommentsByPost
 } = require('./posts');
 
 const route = Router();
@@ -16,7 +18,7 @@ route.get('/posts', async (req, res) => {
 		const posts = await getPostsByUserId(req.query.userId);
 		res.send(posts);
 	} else {
-		const posts = await getPosts();
+		const posts = await getPosts(req.query.limit, req.query.page);
 		res.send(posts);
 	}
 });
@@ -44,6 +46,24 @@ route.get('/posts/:id', async (req, res) => {
 route.put('/posts/:id', async (req, res) => {
 	const post = await updatePostById(req.params.id, req.query);
 	res.send(post);
+});
+
+route.post('/posts/:id/comments', async (req, res) => {
+	try {
+		const comment = await addComment(req.params.id, req.body);
+		res.send(comment);
+	} catch (e) {
+		res.status(400).send(e.message);
+	}
+});
+
+route.get('/posts/:id/comments', async (req, res) => {
+	try {
+		const comments = await getCommentsByPost(req.params.id, req.query.limit, req.query.page);
+		res.send(comments);
+	} catch (e) {
+		res.status(400).send(e.message);
+	}
 });
 
 module.exports = {
