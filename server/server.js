@@ -14,6 +14,8 @@ const express = require('express');
 
 const app = express();
 
+const port = process.env.PORT || 3000;
+
 app.use(cors({
 	origin: 'http://localhost:3000',
 }));
@@ -23,4 +25,4 @@ app.use(users.route);
 app.use(posts.route);
 app.use(express.static('build'));
 
-app.listen(80);
+app.listen(port);
