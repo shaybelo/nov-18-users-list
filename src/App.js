@@ -10,7 +10,8 @@ class App extends Component {
 		super();
 
 		this.fetchUsers();
-		this.inputEl = React.createRef();
+		this.nameEl = React.createRef();
+		this.lastNameEl = React.createRef();
 		this.state = {
 			users: null,
 		}
@@ -25,7 +26,8 @@ class App extends Component {
 		event.preventDefault();
 
 		await usersService.createUser({
-			name: this.inputEl.current.value
+			name: this.nameEl.current.value,
+			lastName: this.lastNameEl.current.value
 		});
 
 		this.fetchUsers();
@@ -40,7 +42,9 @@ class App extends Component {
 		return (
 			<div className="App">
 				<form onSubmit={(event) => this.createUser(event)}>
-					<input ref={this.inputEl} placeholder="Enter new user"/>
+					<input ref={this.nameEl} placeholder="Enter name"/>
+					<input ref={this.lastNameEl} placeholder="Enter last name"/>
+					<button>Submit</button>
 				</form>
 				<UsersList users={this.state.users} onDeleteUser={(user) => this.deleteUser(user)}/>
 			</div>

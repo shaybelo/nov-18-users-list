@@ -21,5 +21,6 @@ app.use(bodyParser.json());
 app.use(logger('dev'));
 app.use(users.route);
 app.use(posts.route);
+app.use(express.static('build'));
 
 app.listen(8080);
