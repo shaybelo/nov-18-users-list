@@ -15,6 +15,10 @@ class App extends Component {
 		this.state = {
 			users: null,
 		}
+
+		setTimeout(() => {
+			this.fetchUsers()
+		}, 1000);
 	}
 
 	async fetchUsers() {
