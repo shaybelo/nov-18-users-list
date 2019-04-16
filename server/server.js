@@ -5,8 +5,10 @@ const posts = require('./posts/posts.routes');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+const DB_URI = process.env.DB_URI || 'mongodb://localhost:27017/nov-18-mongoose';
+
 mongoose.connect(
-	'mongodb://localhost:27017/nov-18-mongoose',
+	DB_URI,
 	{ useNewUrlParser: true }
 );
 
