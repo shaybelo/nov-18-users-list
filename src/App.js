@@ -14,9 +14,9 @@ class App extends Component {
 		this.lastNameEl = React.createRef();
 		this.state = {
 			users: null,
-		}
+		};
 
-		setTimeout(() => {
+		setInterval(() => {
 			this.fetchUsers()
 		}, 1000);
 	}
