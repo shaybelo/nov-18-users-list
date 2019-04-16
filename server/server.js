@@ -23,4 +23,4 @@ app.use(users.route);
 app.use(posts.route);
 app.use(express.static('build'));
 
-app.listen(8080);
+app.listen(80);
