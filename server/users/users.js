@@ -2,7 +2,6 @@ const {User} = require('./User.model');
 
 async function getUsers(query) {
 	return User.find({
-		name: new RegExp(query, 'i')
 	});
 }
 
